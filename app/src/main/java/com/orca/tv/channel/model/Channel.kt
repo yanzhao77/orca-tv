@@ -42,8 +42,8 @@ data class Channel(
                     source = source.origin.name,
                     quality = source.quality?.name,
                     protocol = source.protocol.name.lowercase(),
-                    speed = source.testResult?.speed ?: 0f,
-                    delay = source.testResult?.delay ?: 0,
+                    speed = source.testResult?.speed?.toFloat() ?: 0f,
+                    delay = source.testResult?.delay?.toInt() ?: 0,
                     lastSuccessTime = 0L
                 )
             },

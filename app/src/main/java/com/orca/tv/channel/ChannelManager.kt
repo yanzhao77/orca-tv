@@ -75,18 +75,16 @@ object ChannelManager {
             val sourceUrls = getSourceUrls()
             val result = sourceManager.loadSources(sourceUrls)
             
-            result.onSuccess { content ->
+            return@withContext result.mapCatching { content ->
                 // 解析 M3U
                 val parsedChannels = parser.parse(content)
                 _channels.value = parsedChannels
-                Result.success(Unit)
             }.onFailure { exception ->
                 _error.value = exception.message
-                Result.failure<Unit>(exception)
             }
         } catch (e: Exception) {
             _error.value = e.message
-            Result.failure(e)
+            return@withContext Result.failure(e)
         } finally {
             _isLoading.value = false
         }
