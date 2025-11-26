@@ -36,8 +36,17 @@ data class Channel(
             name = displayName,
             category = category,
             logo = logo,
-            urls = sources.map { it.url },
-            lastPlayedUrl = getPreferredSource()?.url,
+            lines = sources.map { source ->
+                com.orca.tv.data.ChannelLine(
+                    url = source.url,
+                    source = source.source,
+                    quality = source.quality,
+                    protocol = source.protocol,
+                    speed = source.speed,
+                    delay = source.delay,
+                    lastSuccessTime = source.lastSuccessTime
+                )
+            },
             isFavorite = false
         )
     }
