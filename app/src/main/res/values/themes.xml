@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Leanback Theme -->
+    <style name="Theme.Leanback" parent="Theme.Leanback.Browse">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorAccent">@color/accent</item>
+    </style>
+    
+    <!-- Browse Theme -->
+    <style name="Theme.Leanback.Browse" parent="Theme.Leanback">
+        <item name="browseTitleTextStyle">@style/BrowseTitleTextStyle</item>
+    </style>
+    
+    <!-- Browse Title Text Style -->
+    <style name="BrowseTitleTextStyle" parent="Widget.Leanback.Title.Text">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+</resources>

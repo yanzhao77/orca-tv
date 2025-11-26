@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orca TV</string>
+    <string name="browse_title">频道列表</string>
+    <string name="settings_title">设置</string>
+    
+    <!-- 设置项 -->
+    <string name="pref_api_url_title">后端 API 地址</string>
+    <string name="pref_api_url_summary">输入 iptv-api 服务地址，例如: http://192.168.1.10:8000</string>
+    <string name="pref_api_url_default">http://</string>
+    
+    <!-- 错误提示 -->
+    <string name="error_network">网络连接失败</string>
+    <string name="error_load_failed">加载失败</string>
+    <string name="error_no_channels">没有可用的频道</string>
+    <string name="error_playback_failed">播放失败</string>
+    
+    <!-- 提示信息 -->
+    <string name="info_loading">正在加载...</string>
+    <string name="info_refreshing">正在刷新...</string>
+    <string name="info_cache_loaded">已加载本地缓存</string>
+    <string name="info_default_loaded">已加载默认频道列表</string>
+    <string name="info_configure_api">请在设置中配置后端 API 地址</string>
+    
+    <!-- 播放相关 -->
+    <string name="playback_switching_line">正在切换线路...</string>
+    <string name="playback_all_failed">所有线路均无法播放</string>
+    <string name="playback_line_info">线路 %1$d/%2$d</string>
+</resources>
