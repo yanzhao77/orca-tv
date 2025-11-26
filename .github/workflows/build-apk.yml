@@ -23,8 +23,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Setup Keystore (if signing)
-        if: ${{ secrets.KEYSTORE_FILE != '' }}
-        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > release.keystore
+        if: ${{ secrets.KEYSTORE_FILE }}
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > release.keystore
 
       - name: Build APK
         run: ./gradlew clean assembleDebug assembleRelease
