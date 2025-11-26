@@ -14,6 +14,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 自定义频道排序
 - 播放器手势控制
 
+## [1.1.0] - 2025-11-26
+
+### Added
+- ✨ **ChannelManager 模块** - 完全本地化的频道管理系统
+- ✨ **高性能 M3U 解析器** - 支持标准和扩展格式
+- ✨ **智能源管理** - 远程源、本地源、缓存三级回退
+- ✨ **多线路自动合并** - 同名频道的多个线路自动整合
+- ✨ **本地 API 接口** - 提供 JSON 和 M3U 格式输出
+- ✨ **离线可用** - 缓存机制支持完全离线使用
+
+### Changed
+- 🔄 **架构升级** - 从外部 HTTP API 迁移到本地 Kotlin 模块
+- 🔄 **性能提升** - 响应速度从 100-500ms 降至 < 10ms
+- 🔄 **简化部署** - 无需部署 iptv-api 后端服务
+
+### Technical
+- 🔧 新增 ChannelManager 核心模块（1,469 行代码）
+- 🔧 StateFlow 状态管理
+- 🔧 Coroutines 异步处理
+- 🔧 完整的错误处理和日志
+
+### Documentation
+- 📚 ChannelManager 设计文档
+- 📚 集成测试报告
+- 📚 交付报告
+
+---
+
 ## [1.0.0] - 2025-11-26
 
 ### Added
