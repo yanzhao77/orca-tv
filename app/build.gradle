@@ -18,10 +18,37 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            // 从环境变量或 gradle.properties 读取签名配置
+            if (System.getenv("KEYSTORE_FILE")) {
+                // GitHub Actions 环境
+                def keystoreFile = file("${rootProject.projectDir}/release.keystore")
+                if (keystoreFile.exists()) {
+                    storeFile keystoreFile
+                    storePassword System.getenv("KEYSTORE_PASSWORD")
+                    keyAlias System.getenv("KEY_ALIAS")
+                    keyPassword System.getenv("KEY_PASSWORD")
+                }
+            } else if (project.hasProperty('RELEASE_STORE_FILE')) {
+                // 本地构建环境
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            
+            // 如果签名配置存在，则使用签名
+            if (signingConfigs.release.storeFile?.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 

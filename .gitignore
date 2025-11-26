@@ -55,6 +55,10 @@ captures/
 # Keystore files
 *.jks
 *.keystore
+*.keystore.base64
+release.keystore
+orca-tv-release.keystore
+orca-tv-release.keystore.base64
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
