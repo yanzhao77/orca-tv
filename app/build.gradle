@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.orca.tv"
-        minSdk 21  // Android 5.0 (Lollipop)
+        minSdk 26  // Android 8.0 (Oreo) - 支持 Adaptive Icon 和现代 TV 特性
         targetSdk 34
         versionCode 2
         versionName "1.1.0"
