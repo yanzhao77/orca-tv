@@ -1,0 +1,124 @@
+name: Build and Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'  # 当推送 v* 格式的标签时触发（如 v1.0.0, v1.1.0 ）
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+      
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Setup Keystore (if secrets exist)
+        if: ${{ secrets.KEYSTORE_FILE != '' }}
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > release.keystore
+      
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      
+      - name: Get version name
+        id: version
+        run: |
+          VERSION_NAME=$(grep "versionName" app/build.gradle | awk -F'"' '{print $2}')
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME"
+      
+      - name: Rename APK files
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION_NAME }}"
+          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/orca-tv-v${VERSION}-debug.apk
+          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+            mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/orca-tv-v${VERSION}-release-signed.apk
+          elif [ -f app/build/outputs/apk/release/app-release-unsigned.apk ]; then
+            mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/orca-tv-v${VERSION}-release-unsigned.apk
+          fi
+      
+      - name: Generate build info
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION_NAME }}"
+          echo "Orca-tv v${VERSION}" > BUILD_INFO.txt
+          echo "Build Date: $(date)" >> BUILD_INFO.txt
+          echo "Commit: ${{ github.sha }}" >> BUILD_INFO.txt
+          echo "Branch: ${{ github.ref }}" >> BUILD_INFO.txt
+      
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orca-tv-debug
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+      
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orca-tv-release
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 90
+      
+      - name: Upload Build Info
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-info
+          path: BUILD_INFO.txt
+      
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+            BUILD_INFO.txt
+          body: |
+            ## Orca-tv ${{ steps.version.outputs.VERSION_NAME }}
+            
+            ### 📦 下载
+            
+            - **Debug APK**: 用于调试和测试
+            - **Release APK**: 用于正式使用
+            
+            ### 📝 更新日志
+            
+            详见 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md )
+            
+            ### 🔧 安装说明
+            
+            1. 下载对应的 APK 文件
+            2. 在 Android TV 设备上安装
+            3. 打开应用并配置频道源
+            
+            ### ⚠️ 注意事项
+            
+            - Release APK 可能未签名，安装时需允许未知来源
+            - 首次使用建议配置自己的 iptv-api 后端地址
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
