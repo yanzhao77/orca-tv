@@ -32,19 +32,19 @@ data class Channel(
      */
     fun toEntity(): com.orca.tv.data.Channel {
         return com.orca.tv.data.Channel(
-            id = id,
+            id = id.hashCode().toLong(),
             name = displayName,
             category = category,
             logo = logo,
             lines = sources.map { source ->
                 com.orca.tv.data.ChannelLine(
                     url = source.url,
-                    source = source.source,
-                    quality = source.quality,
-                    protocol = source.protocol,
-                    speed = source.speed,
-                    delay = source.delay,
-                    lastSuccessTime = source.lastSuccessTime
+                    source = source.origin.name,
+                    quality = source.quality?.name,
+                    protocol = source.protocol.name.lowercase(),
+                    speed = source.testResult?.speed ?: 0f,
+                    delay = source.testResult?.delay ?: 0,
+                    lastSuccessTime = 0L
                 )
             },
             isFavorite = false
